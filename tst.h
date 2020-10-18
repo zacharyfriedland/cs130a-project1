@@ -1,4 +1,5 @@
 // tst.h
+// Zachary Friedland
 // Ternary Search Tree (TST) header file
 
 #ifndef TST_H

@@ -1,4 +1,5 @@
 // tst.cpp
+// Zachary Friedland
 // Implements TST class
 #include "tst.h"
 #include <string>
@@ -9,7 +10,6 @@ TST::TST() : root(nullptr){ }
 
 TST::~TST(){
     clear(root);
-    root = nullptr;
 }   
 
 void TST::clear(Node* n){
@@ -24,35 +24,29 @@ void TST::clear(Node* n){
 bool TST::insert(string word){
     if(!root){
         root = new Node(make_pair(word, 1), make_pair("", 0));
+        std::cout << word << " inserted, new count = " << root->kleft.second << endl;
         return true;
     }
     return insert(word, root);
 }
 
 bool TST::insert(string word, Node* n){
+    // update count if word exists
     if(word == n->kleft.first){
         n->kleft.second++;
+        std::cout << word << " inserted, new count = " << n->kleft.second << endl;
         return true;
     }
     else if(word == n->kright.first){
         n->kright.second++;
+        std::cout << word << " inserted, new count = " << n->kright.second << endl;
         return true;
     }
-
-    if(n->kleft.second == 0 && word < n->kright.first){
-        n->kleft.first = word;
-        n->kleft.second = 1;
-        return true;
-    }
-    else if(n->kleft.second == 0 && word > n->kright.first){
-        n->kleft.first = n->kright.first;
-        n->kleft.second = n->kright.second;
-        n->kright.first = word;
-        n->kright.second = 1;
-    }
+    
     else if(n->kright.second == 0 && word > n->kleft.first){
         n->kright.first = word;
         n->kright.second = 1;
+        std::cout << word << " inserted, new count = " << n->kright.second << endl;
         return true;
     }
     else if(n->kright.second == 0 && word < n->kleft.first){
@@ -60,6 +54,8 @@ bool TST::insert(string word, Node* n){
         n->kright.second = n->kleft.second;
         n->kleft.first = word;
         n->kleft.second = 1;
+        std::cout << word << " inserted, new count = " << n->kleft.second << endl;
+        return true;
     }
 
     if(word < n->kleft.first){
@@ -69,6 +65,7 @@ bool TST::insert(string word, Node* n){
         else{
             n->left = new Node(make_pair(word, 1), make_pair("", 0));
             n->left->parent = n;
+            std::cout << word << " inserted, new count = " << n->kleft.second << endl;
             return true;
         }
     }
@@ -79,6 +76,7 @@ bool TST::insert(string word, Node* n){
         else{
             n->mid = new Node(make_pair(word, 1), make_pair("", 0));
             n->mid->parent = n;
+            std::cout << word << " inserted, new count = " << n->kleft.second << endl;
             return true;
         }
     }
@@ -89,6 +87,7 @@ bool TST::insert(string word, Node* n){
         else{
             n->right = new Node(make_pair(word, 1), make_pair("", 0));
             n->right->parent = n;
+            std::cout << word << " inserted, new count = " << n->kleft.second << endl;
             return true;
         }
     }
@@ -175,7 +174,6 @@ void TST::printRange(string target1, string target2, Node* n){
 }
 
 void TST::printInOrder(){
-    cout << "hitting basic print" << endl;
     printInOrder(root);
 }
 
@@ -302,6 +300,7 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             root = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kleft to be deleted with kright present
@@ -309,6 +308,8 @@ bool TST::remove(string word){
                         target->kleft.second = target->kright.second;
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
+                        return true;
                     }
                     // left child
                     else if(target->parent->left == target){
@@ -316,6 +317,7 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             target->parent->left = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kleft to be deleted with kright present
@@ -323,6 +325,7 @@ bool TST::remove(string word){
                         target->kleft.second = target->kright.second;
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
                         return true;
                     }
                     // mid child
@@ -331,6 +334,7 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             target->parent->mid = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kleft to be deleted with kright present
@@ -338,6 +342,7 @@ bool TST::remove(string word){
                         target->kleft.second = target->kright.second;
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
                         return true;
                         
                     }
@@ -347,6 +352,7 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             target->parent->right = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kleft to be deleted with kright present
@@ -354,6 +360,7 @@ bool TST::remove(string word){
                         target->kleft.second = target->kright.second;
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
                         return true;
                     }
                 }
@@ -369,6 +376,7 @@ bool TST::remove(string word){
                             target->kleft.second = tmp->kright.second;
                             tmp->kright.first = "";
                             tmp->kright.second = 0;
+                            std::cout << word << " deleted" << endl;
                             reorderTree(root);
                             return true;
                         }
@@ -379,6 +387,7 @@ bool TST::remove(string word){
                                 target->kleft.second = tmp->kleft.second;
                                 tmp->kright.first = "";
                                 tmp->kright.second = 0;
+                                std::cout << word << " deleted" << endl;
                                 reorderTree(root);
                                 return true;
                         }
@@ -389,6 +398,7 @@ bool TST::remove(string word){
                         target->kleft.second = tmp->kleft.second;
                         tmp->kleft.first = "";
                         tmp->kleft.second = 0;
+                        std::cout << word << " deleted" << endl;
                         reorderTree(root);
                         return true;
     
@@ -402,6 +412,7 @@ bool TST::remove(string word){
                         target->kright.second = tmp->kleft.second;
                         tmp->kleft.first = "";
                         tmp->kleft.second = 0;
+                        std::cout << word << " deleted" << endl;
                         reorderTree(root);
                         return true;
                     }
@@ -413,7 +424,7 @@ bool TST::remove(string word){
             // decrement count if > 1
             if(target->kright.second > 1){
                 target->kright.second--;
-                cout << word << " deleted, new count = " << target->kright.second << endl;
+                std::cout << word << " deleted, new count = " << target->kright.second << endl;
                 return true;
             }
             else if(target->kright.second == 1){
@@ -425,11 +436,14 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             root = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kright to be deleted with kleft present
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
+                        return true;
                     }
                     // left child
                     else if(target->parent->left == target){
@@ -437,11 +451,13 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             target->parent->left = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kright to be deleted with kleft present
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
                         return true;
                     }
                     // mid child
@@ -450,11 +466,13 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             target->parent->mid = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kright to be deleted with kleft present
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
                         return true;
                     }
                     // right child
@@ -463,11 +481,13 @@ bool TST::remove(string word){
                         if(target->kleft.second == 0 || target->kright.second == 0){
                             target->parent->right = nullptr;
                             delete target;
+                            std::cout << word << " deleted" << endl;
                             return true;
                         }
                         // kright to be deleted with kleft present
                         target->kright.first = "";
                         target->kright.second = 0;
+                        std::cout << word << " deleted" << endl;
                         return true;
                     }
                 }
@@ -481,6 +501,7 @@ bool TST::remove(string word){
                         target->kright.second = tmp->kleft.second;
                         tmp->kleft.first = "";
                         tmp->kleft.second = 0;
+                        std::cout << word << " deleted" << endl;
                         reorderTree(root);
                         return true;
                     }
@@ -492,6 +513,7 @@ bool TST::remove(string word){
                             target->kright.second = tmp->kright.second;
                             tmp->kright.first = "";
                             tmp->kright.second = 0;
+                            std::cout << word << " deleted" << endl;
                             reorderTree(root);
                             return true;
                         }
@@ -503,6 +525,7 @@ bool TST::remove(string word){
                             target->kleft.second = tmp->kright.second;
                             tmp->kright.first = "";
                             tmp->kright.second = 0;
+                            std::cout << word << " deleted" << endl;
                             reorderTree(root);
                             return true;
                         }
@@ -515,6 +538,7 @@ bool TST::remove(string word){
                             target->kright.second = tmp->kleft.second;
                             tmp->kleft.first = "";
                             tmp->kleft.second = 0;
+                            std::cout << word << " deleted" << endl;
                             reorderTree(root);
                             return true;
                         }
@@ -525,6 +549,7 @@ bool TST::remove(string word){
                             target->kleft.second = tmp->kleft.second;
                             tmp->kleft.first = "";
                             tmp->kleft.second = 0;
+                            std::cout << word << " deleted" << endl;
                             reorderTree(root);
                             return true;
                         }

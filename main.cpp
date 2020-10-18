@@ -1,4 +1,5 @@
 // main.cpp
+// Zachary Friedland
 #include "tst.h"
 #include <iostream>
 #include <vector>
@@ -7,7 +8,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-  TST tst = TST();
+  TST* tst = new TST();
   vector<string> input;
   string keywords[4] = {"lookup", "insert", "delete", "range_search"};
   for(int i = 0; i < argc; i++){
@@ -19,30 +20,24 @@ int main(int argc, char** argv) {
       if(input[i] == "lookup"){
         string param = input[i+1];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
-        cout << param << endl;
-        tst.lookup(param);
+        cout << tst->lookup(param) << endl;
       }
       else if(input[i] == "insert"){
         string param = input[i+1];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
-        cout << param << endl;
-        tst.insert(param);
+        tst->insert(param);
       }
       else if(input[i] == "delete"){
         string param = input[i+1];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
-        cout << param << endl;
-        tst.remove(param);
+        tst->remove(param);
       }
       else if(input[i] == "range_search"){
         string param = input[i+1] + " " + input[i+2] + " " + input[i+3];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
-        cout << param << endl;
-        tst.lookup(param);
+        tst->range_search(param);
       }
     }
   }
-  cout << endl;
-
   return 0;
 }
