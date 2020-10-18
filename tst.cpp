@@ -65,6 +65,7 @@ bool TST::insert(string word, Node* n){
         else{
             n->left = new Node(make_pair(word, 1), make_pair("", 0));
             n->left->parent = n;
+            n = n->left;
             std::cout << word << " inserted, new count = " << n->kleft.second << endl;
             return true;
         }
@@ -76,6 +77,7 @@ bool TST::insert(string word, Node* n){
         else{
             n->mid = new Node(make_pair(word, 1), make_pair("", 0));
             n->mid->parent = n;
+            n = n->mid;
             std::cout << word << " inserted, new count = " << n->kleft.second << endl;
             return true;
         }
@@ -87,6 +89,7 @@ bool TST::insert(string word, Node* n){
         else{
             n->right = new Node(make_pair(word, 1), make_pair("", 0));
             n->right->parent = n;
+            n = n->right;
             std::cout << word << " inserted, new count = " << n->kleft.second << endl;
             return true;
         }

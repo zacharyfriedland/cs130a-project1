@@ -9,6 +9,15 @@ using namespace std;
 
 int main(int argc, char** argv) {
   TST* tst = new TST();
+  tst->insert("hello");
+  tst->insert("hello");
+  tst->insert("yesterday");
+  tst->insert("yesterday");
+  tst->insert("yesterday");
+  tst->insert("band");
+  tst->insert("bankers");
+  tst->insert("bat");
+  tst->insert("cab");
   vector<string> input;
   string keywords[4] = {"lookup", "insert", "delete", "range_search"};
   for(int i = 0; i < argc; i++){
