@@ -1,32 +1,48 @@
 // main.cpp
 #include "tst.h"
 #include <iostream>
-#include <sstream>
+#include <vector>
+#include <algorithm>
+#include <string>
 using namespace std;
 
-int main() {
+int main(int argc, char** argv) {
   TST tst = TST();
-  tst.insert("dog");
-  tst.insert("lion");
-  tst.insert("ball");
-  tst.insert("cat");
-  tst.insert("wolf");
-  tst.insert("dog");
-  tst.printInOrder();
-  // cout << tst.lookup("lion") << endl;
-  // cout << tst.lookup("army") << endl;
-  // tst.range_search("dog to rat");
+  vector<string> input;
+  string keywords[4] = {"lookup", "insert", "delete", "range_search"};
+  for(int i = 0; i < argc; i++){
+    input.push_back(argv[i]);
+  }
 
-  tst.remove("ball");
-  tst.remove("wolf");
-  tst.remove("cat");
-  tst.remove("dog");
-  tst.remove("dog");
-  tst.remove("lion");
-
-
-  cout << "------" << endl;
-  tst.printInOrder();
+  for(int i = 1; i < input.size(); i++){
+    if (find(begin(keywords), end(keywords), input[i]) != end(keywords)){
+      if(input[i] == "lookup"){
+        string param = input[i+1];
+        param.erase(remove(param.begin(), param.end(), ','), param.end());
+        cout << param << endl;
+        tst.lookup(param);
+      }
+      else if(input[i] == "insert"){
+        string param = input[i+1];
+        param.erase(remove(param.begin(), param.end(), ','), param.end());
+        cout << param << endl;
+        tst.insert(param);
+      }
+      else if(input[i] == "delete"){
+        string param = input[i+1];
+        param.erase(remove(param.begin(), param.end(), ','), param.end());
+        cout << param << endl;
+        tst.remove(param);
+      }
+      else if(input[i] == "range_search"){
+        string param = input[i+1] + " " + input[i+2] + " " + input[i+3];
+        param.erase(remove(param.begin(), param.end(), ','), param.end());
+        cout << param << endl;
+        tst.lookup(param);
+      }
+    }
+  }
+  cout << endl;
 
   return 0;
 }

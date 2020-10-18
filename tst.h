@@ -39,6 +39,9 @@ class TST {
         void printInOrder(Node* n);
         void printRange(string target1, string target2, Node* n);
         Node* getNode(string word, Node* n);
+        Node* getPredecessorNode(string word);
+        Node* getSuccessorNode(string word);
+        void reorderTree(Node* n);
 };
 
 #endif

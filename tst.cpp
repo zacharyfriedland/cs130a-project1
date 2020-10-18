@@ -8,7 +8,6 @@
 TST::TST() : root(nullptr){ }   
 
 TST::~TST(){
-    // cout << "destructor" << endl;
     clear(root);
     root = nullptr;
 }   
@@ -151,6 +150,133 @@ TST::Node* TST::getNode(string word, Node* n){
     return 0;
 }
 
+void TST::range_search(string phrase){
+    stringstream input(phrase);
+    string to;
+    string target1;
+    string target2;
+    input >> target1;
+    input >> to;
+    input >> target2;
+
+    printRange(target1, target2, root);
+} 
+
+void TST::printRange(string target1, string target2, Node* n){
+    if(n){
+        printRange(target1, target2, n->left);
+        if(n->kleft.second > 0 && n->kleft.first >= target1 && n->kleft.first <= target2)
+            std::cout << n->kleft.first << endl;
+        printRange(target1, target2, n->mid);
+        if(n->kright.second > 0 && n->kright.first >= target1 && n->kright.first <= target2)
+            std::cout << n->kright.first << endl;
+        printRange(target1, target2, n->right);
+    }
+}
+
+void TST::printInOrder(){
+    cout << "hitting basic print" << endl;
+    printInOrder(root);
+}
+
+void TST::printInOrder(Node* n){
+    if(n){
+        printInOrder(n->left);
+        if(n->kleft.second > 0){
+            std::cout << n->kleft.first << " " << n->kleft.second << endl;
+        }
+        printInOrder(n->mid);
+        if(n->kright.second > 0)
+            std::cout << n->kright.first << " " << n->kright.second << endl;
+        printInOrder(n->right);
+    }
+}
+
+TST::Node* TST::getPredecessorNode(string word){
+    Node* n = getNode(word, root);
+    if(!n){
+        return 0;
+    }
+    // if n has a left child
+    if(n->left){
+        n = n->left;
+        while(n->right)
+            n = n->right;
+        return n;
+    }
+    // if n has a middle 
+    else if(n->mid){
+        n = n->mid;
+        while(n->left)
+            n = n->left;
+        return n;
+    }
+    // worst case n has a right
+    // if(n->right)
+    else{
+        n = n->right;
+        while(n->left)
+            n = n->left;
+        return n;
+    }
+    return 0;
+}
+
+TST::Node* TST::getSuccessorNode(string word){
+    Node* n = getNode(word, root);
+    if(!n){
+        return 0;
+    }
+    // if n has a right child
+    if(n->right){
+        n = n->right;
+        while(n->left)
+            n = n->left;
+        return n;
+    }
+    // if n has a middle 
+    else if(n->mid){
+        n = n->mid;
+        while(n->right)
+            n = n->right;
+        return n;
+    }
+    // worst case n has only a left
+    // if(n->left)
+    else{
+        n = n->left;
+        while(n->right)
+            n = n->right;
+        return n;
+    }
+    return 0;
+}
+
+void TST::reorderTree(Node* n){
+    // if root is empty now
+    if(n == root && n->kleft.second == 0 && n->kright.second == 0){
+        root = nullptr;
+        delete n;
+    }
+    if(n){
+        // recurse through left subtree
+        reorderTree(n->left);
+        // if there are no keys left
+        if(n->kleft.second == 0 && n->kright.second == 0){
+            delete n;
+        }
+        // if there is a kright with no kleft
+        else if(n->kleft.second == 0 && n->kright.second > 0){
+            n->kleft.first = n->kright.first;
+            n->kleft.second = n->kright.second;
+            n->kright.first = "";
+            n->kright.second = 0;
+        }
+        reorderTree(n->mid);
+        reorderTree(n->right);
+    }
+}
+
 bool TST::remove(string word){
     // word doesn't exist
     if(!getNode(word, root)){
@@ -179,17 +305,10 @@ bool TST::remove(string word){
                             return true;
                         }
                         // kleft to be deleted with kright present
-                        else if(word == target->kleft.first){
-                            target->kleft.first = target->kright.first;
-                            target->kleft.second = target->kright.second;
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                        }
-                        // kright to be deleted with kleft present
-                        else if(word == target->kright.first){
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                        }
+                        target->kleft.first = target->kright.first;
+                        target->kleft.second = target->kright.second;
+                        target->kright.first = "";
+                        target->kright.second = 0;
                     }
                     // left child
                     else if(target->parent->left == target){
@@ -200,19 +319,11 @@ bool TST::remove(string word){
                             return true;
                         }
                         // kleft to be deleted with kright present
-                        else if(word == target->kleft.first){
-                            target->kleft.first = target->kright.first;
-                            target->kleft.second = target->kright.second;
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                            return true;
-                        }
-                        // kright to be deleted with kleft present
-                        else if(word == target->kright.first){
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                            return true;
-                        }
+                        target->kleft.first = target->kright.first;
+                        target->kleft.second = target->kright.second;
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                        return true;
                     }
                     // mid child
                     else if(target->parent->mid == target){
@@ -223,19 +334,12 @@ bool TST::remove(string word){
                             return true;
                         }
                         // kleft to be deleted with kright present
-                        else if(word == target->kleft.first){
-                            target->kleft.first = target->kright.first;
-                            target->kleft.second = target->kright.second;
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                            return true;
-                        }
-                        // kright to be deleted with kleft present
-                        else if(word == target->kright.first){
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                            return true;
-                        }
+                        target->kleft.first = target->kright.first;
+                        target->kleft.second = target->kright.second;
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                        return true;
+                        
                     }
                     // right child
                     else if(target->parent->right == target){
@@ -246,21 +350,63 @@ bool TST::remove(string word){
                             return true;
                         }
                         // kleft to be deleted with kright present
-                        else if(word == target->kleft.first){
-                            target->kleft.first = target->kright.first;
-                            target->kleft.second = target->kright.second;
-                            target->kright.first = "";
-                            target->kright.second = 0;
-                            return true;
-                        }
-                        // kright to be deleted with kleft present
-                        else if(word == target->kright.first){
-                            target->kright.first = "";
-                            target->kright.second = 0;
+                        target->kleft.first = target->kright.first;
+                        target->kleft.second = target->kright.second;
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                        return true;
+                    }
+                }
+                // if children present
+                else{
+                    // get next smallest word
+                    Node* tmp = getPredecessorNode(word);
+                    // left subtree
+                    // if predecessor node has a kright
+                    if(tmp->kright.second > 0){
+                        if(tmp->kright.first < target->kleft.first){
+                            target->kleft.first = tmp->kright.first;
+                            target->kleft.second = tmp->kright.second;
+                            tmp->kright.first = "";
+                            tmp->kright.second = 0;
+                            reorderTree(root);
                             return true;
                         }
                     }
+                    else if(tmp->kright.second < 1){
+                        if(tmp->kleft.first < target->kleft.first){
+                                target->kleft.first = tmp->kleft.first;
+                                target->kleft.second = tmp->kleft.second;
+                                tmp->kright.first = "";
+                                tmp->kright.second = 0;
+                                reorderTree(root);
+                                return true;
+                        }
+                    }
+                    // mid subtree
+                    else if(tmp->kleft.first > target->kleft.first && tmp->kleft.first < target->kright.first){
+                        target->kleft.first = tmp->kleft.first;
+                        target->kleft.second = tmp->kleft.second;
+                        tmp->kleft.first = "";
+                        tmp->kleft.second = 0;
+                        reorderTree(root);
+                        return true;
+    
+                    }
+                    // if only right subtree
+                    // if(tmp->kleft.first > target->kright.first)
+                    else{
+                        target->kleft.first = target->kright.first;
+                        target->kleft.second = target->kright.second;
+                        target->kright.first = tmp->kleft.first;
+                        target->kright.second = tmp->kleft.second;
+                        tmp->kleft.first = "";
+                        tmp->kleft.second = 0;
+                        reorderTree(root);
+                        return true;
+                    }
                 }
+                
             }
         }
         else if(word == target->kright.first){
@@ -270,73 +416,122 @@ bool TST::remove(string word){
                 cout << word << " deleted, new count = " << target->kright.second << endl;
                 return true;
             }
+            else if(target->kright.second == 1){
+                // no children
+                if(!target->left && !target->mid && !target->right){
+                    // root case
+                    if(root == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            root = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                    }
+                    // left child
+                    else if(target->parent->left == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            target->parent->left = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                        return true;
+                    }
+                    // mid child
+                    else if(target->parent->mid == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            target->parent->mid = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                        return true;
+                    }
+                    // right child
+                    else if(target->parent->right == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            target->parent->right = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        target->kright.first = "";
+                        target->kright.second = 0;
+                        return true;
+                    }
+                }
+                // if children present
+                else{
+                    // get next smallest word
+                    Node* tmp = getSuccessorNode(word);
+                    // right subtree
+                    if(tmp->kleft.first > target->kright.first){
+                        target->kright.first = tmp->kleft.first;
+                        target->kright.second = tmp->kleft.second;
+                        tmp->kleft.first = "";
+                        tmp->kleft.second = 0;
+                        reorderTree(root);
+                        return true;
+                    }
+                    // two part
+                    else if(tmp->kright.second > 0){
+                        // mid subtree
+                        if(tmp->kright.first < target->kright.first && tmp->kright.first > target->kleft.first){
+                            target->kright.first = tmp->kright.first;
+                            target->kright.second = tmp->kright.second;
+                            tmp->kright.first = "";
+                            tmp->kright.second = 0;
+                            reorderTree(root);
+                            return true;
+                        }
+                        // left subtree
+                        else if(tmp->kright.first < target->kleft.first){
+                            target->kright.first = target->kleft.first;
+                            target->kright.second = target->kleft.second;
+                            target->kleft.first = tmp->kright.first;
+                            target->kleft.second = tmp->kright.second;
+                            tmp->kright.first = "";
+                            tmp->kright.second = 0;
+                            reorderTree(root);
+                            return true;
+                        }
+                    }
+                    // two part
+                    else if(tmp->kright.second < 1){
+                        // mid subtree
+                        if(tmp->kleft.first < target->kright.first && tmp->kleft.first > target->kleft.first){
+                            target->kright.first = tmp->kleft.first;
+                            target->kright.second = tmp->kleft.second;
+                            tmp->kleft.first = "";
+                            tmp->kleft.second = 0;
+                            reorderTree(root);
+                            return true;
+                        }
+                        else if(tmp->kleft.first < target->kleft.first){
+                            target->kright.first = target->kleft.first;
+                            target->kright.second = target->kleft.second;
+                            target->kleft.first = tmp->kleft.first;
+                            target->kleft.second = tmp->kleft.second;
+                            tmp->kleft.first = "";
+                            tmp->kleft.second = 0;
+                            reorderTree(root);
+                            return true;
+                        }
+                    }
+                }
+            }
         }
-        // // no children
-        // if(!target->left && !target->mid && !target->right){
-        //     if(root == target){
-        //         if(target->kleft.second == 0 || target->kright.second == 0){
-        //             root = nullptr;
-        //             delete target;
-        //             return true;
-        //         }
-        //         // else if(target->kleft.first == word)
-        //     }
-        //     else if(target->parent->left == target){
-        //         target->
-        //     }
-        // }
     }
     return false;
 }
-
-void TST::range_search(string phrase){
-    stringstream input(phrase);
-    string to;
-    string target1;
-    string target2;
-    input >> target1;
-    input >> to;
-    input >> target2;
-
-    printRange(target1, target2, root);
-} 
-
-void TST::printRange(string target1, string target2, Node* n){
-    if(n){
-        printRange(target1, target2, n->left);
-        if(n->kleft.second > 0 && n->kleft.first >= target1 && n->kleft.first <= target2)
-            std::cout << n->kleft.first << endl;
-        printRange(target1, target2, n->mid);
-        if(n->kright.second > 0 && n->kright.first >= target1 && n->kright.first <= target2)
-            std::cout << n->kright.first << endl;
-        printRange(target1, target2, n->right);
-    }
-}
-
-void TST::printInOrder(){
-    printInOrder(root);
-}
-
-void TST::printInOrder(Node* n){
-    if(n){
-        printInOrder(n->left);
-        if(n->kleft.second > 0)
-            std::cout << n->kleft.first << " " << n->kleft.second << endl;
-        printInOrder(n->mid);
-        if(n->kright.second > 0)
-            std::cout << n->kright.first << " " << n->kright.second << endl;
-        printInOrder(n->right);
-    }
-}
-
-// struct Node {
-//     pair<string, int> word1;    // uses word1.first and word1.second;
-//     pair<string, int> word2;
-
-//     Node* left;
-//     Node* mid;
-//     Node* right;
-
-//     Node(pair<string,int> val1 = make_pair("", 0), pair<string,int> val2 = make_pair("", 0)) :
-//                     word1(val1), word2(val2) { }
-// };
