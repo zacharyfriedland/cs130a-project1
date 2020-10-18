@@ -151,8 +151,142 @@ TST::Node* TST::getNode(string word, Node* n){
     return 0;
 }
 
-void TST::remove(string word){
-    cout << getNode(word, root)->kleft.first << " " << getNode(word, root)->kright.first << endl;
+bool TST::remove(string word){
+    // word doesn't exist
+    if(!getNode(word, root)){
+        return true;
+    }
+    // word exists and to be deleted
+    if(getNode(word, root)){
+        Node* target = getNode(word, root);
+        // word is in kleft
+        if(word == target->kleft.first){
+            // decrement count if > 1
+            if(target->kleft.second > 1){
+                target->kleft.second--;
+                cout << word << " deleted, new count = " << target->kleft.second << endl;
+                return true;
+            }
+            else if(target->kleft.second == 1){
+                // no children
+                if(!target->left && !target->mid && !target->right){
+                    // root case
+                    if(root == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            root = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kleft to be deleted with kright present
+                        else if(word == target->kleft.first){
+                            target->kleft.first = target->kright.first;
+                            target->kleft.second = target->kright.second;
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                        }
+                        // kright to be deleted with kleft present
+                        else if(word == target->kright.first){
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                        }
+                    }
+                    // left child
+                    else if(target->parent->left == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            target->parent->left = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kleft to be deleted with kright present
+                        else if(word == target->kleft.first){
+                            target->kleft.first = target->kright.first;
+                            target->kleft.second = target->kright.second;
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        else if(word == target->kright.first){
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                            return true;
+                        }
+                    }
+                    // mid child
+                    else if(target->parent->mid == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            target->parent->mid = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kleft to be deleted with kright present
+                        else if(word == target->kleft.first){
+                            target->kleft.first = target->kright.first;
+                            target->kleft.second = target->kright.second;
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        else if(word == target->kright.first){
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                            return true;
+                        }
+                    }
+                    // right child
+                    else if(target->parent->right == target){
+                        // either kleft or kright has nothing
+                        if(target->kleft.second == 0 || target->kright.second == 0){
+                            target->parent->right = nullptr;
+                            delete target;
+                            return true;
+                        }
+                        // kleft to be deleted with kright present
+                        else if(word == target->kleft.first){
+                            target->kleft.first = target->kright.first;
+                            target->kleft.second = target->kright.second;
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                            return true;
+                        }
+                        // kright to be deleted with kleft present
+                        else if(word == target->kright.first){
+                            target->kright.first = "";
+                            target->kright.second = 0;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        else if(word == target->kright.first){
+            // decrement count if > 1
+            if(target->kright.second > 1){
+                target->kright.second--;
+                cout << word << " deleted, new count = " << target->kright.second << endl;
+                return true;
+            }
+        }
+        // // no children
+        // if(!target->left && !target->mid && !target->right){
+        //     if(root == target){
+        //         if(target->kleft.second == 0 || target->kright.second == 0){
+        //             root = nullptr;
+        //             delete target;
+        //             return true;
+        //         }
+        //         // else if(target->kleft.first == word)
+        //     }
+        //     else if(target->parent->left == target){
+        //         target->
+        //     }
+        // }
+    }
+    return false;
 }
 
 void TST::range_search(string phrase){

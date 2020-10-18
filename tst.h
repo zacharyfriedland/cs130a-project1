@@ -14,7 +14,7 @@ class TST {
         ~TST();         // destructor
         bool insert(string word);
         string lookup(string word);
-        void remove(string word);
+        bool remove(string word);
         void range_search(string phrase);
         void printInOrder();
 
