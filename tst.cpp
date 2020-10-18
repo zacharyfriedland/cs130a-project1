@@ -30,47 +30,6 @@ bool TST::insert(string word){
     return insert(word, root);
 }
 
-string TST::lookup(string word){
-    if(!root){
-        return word + " not found";
-    }
-    int result = lookup(word, root);
-    if(result > 0){
-        return word + " found, count = " + to_string(result);
-    }
-    else{
-        return word + " not found";
-    }
-}
-
-bool TST::remove(string word){
-    
-}
-
-void TST::range_search(string phrase){
-    stringstream input(phrase);
-    string to;
-    string target1;
-    string target2;
-    input >> target1;
-    input >> to;
-    input >> target2;
-
-    printRange(target1, target2, root);
-} 
-
-void TST::printRange(string target1, string target2, Node* n){
-    if(n){
-        printRange(target1, target2, n->left);
-        if(n->kleft.second > 0 && n->kleft.first >= target1 && n->kleft.first <= target2)
-            std::cout << n->kleft.first << endl;
-        printRange(target1, target2, n->mid);
-        if(n->kright.second > 0 && n->kright.first >= target1 && n->kright.first <= target2)
-            std::cout << n->kright.first << endl;
-        printRange(target1, target2, n->right);
-    }
-}
-
 bool TST::insert(string word, Node* n){
     if(word == n->kleft.first){
         n->kleft.second++;
@@ -137,6 +96,19 @@ bool TST::insert(string word, Node* n){
     return false;
 }
 
+string TST::lookup(string word){
+    if(!root){
+        return word + " not found";
+    }
+    int result = lookup(word, root);
+    if(result > 0){
+        return word + " found, count = " + to_string(result);
+    }
+    else{
+        return word + " not found";
+    }
+}
+
 int TST::lookup(string word, Node* n){
     if(!n){
         return 0;
@@ -159,6 +131,52 @@ int TST::lookup(string word, Node* n){
         }
     }
     return 0;
+}
+
+TST::Node* TST::getNode(string word, Node* n){
+    if(n){
+        if(n->kleft.first == word || n->kright.first == word){
+            return n;
+        }
+        else if(word < n->kleft.first){
+            return getNode(word, n->left);
+        }
+        else if(word > n->kleft.first && word < n->kright.first){
+            return getNode(word, n->mid);
+        }
+        else if(word > n->kright.first){
+            return getNode(word, n->right);
+        }
+    }
+    return 0;
+}
+
+void TST::remove(string word){
+    cout << getNode(word, root)->kleft.first << " " << getNode(word, root)->kright.first << endl;
+}
+
+void TST::range_search(string phrase){
+    stringstream input(phrase);
+    string to;
+    string target1;
+    string target2;
+    input >> target1;
+    input >> to;
+    input >> target2;
+
+    printRange(target1, target2, root);
+} 
+
+void TST::printRange(string target1, string target2, Node* n){
+    if(n){
+        printRange(target1, target2, n->left);
+        if(n->kleft.second > 0 && n->kleft.first >= target1 && n->kleft.first <= target2)
+            std::cout << n->kleft.first << endl;
+        printRange(target1, target2, n->mid);
+        if(n->kright.second > 0 && n->kright.first >= target1 && n->kright.first <= target2)
+            std::cout << n->kright.first << endl;
+        printRange(target1, target2, n->right);
+    }
 }
 
 void TST::printInOrder(){

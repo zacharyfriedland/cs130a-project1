@@ -16,5 +16,7 @@ int main() {
   cout << tst.lookup("army") << endl;
   tst.range_search("dog to rat");
 
+  tst.remove("dog");
+
   return 0;
 }
