@@ -1,5 +1,5 @@
 # Makefile
-project1.out: main.o tst.o
+all: main.o tst.o
 	g++ -std=c++11 main.o tst.o -o project1.out
 
 tst: tst.o
