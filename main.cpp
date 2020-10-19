@@ -22,21 +22,25 @@ int main(int argc, char** argv) {
         string param = input[i+1];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
         cout << tst->lookup(param) << endl;
+        i++;
       }
       else if(input[i] == "insert"){
         string param = input[i+1];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
         tst->insert(param);
+        i++;
       }
       else if(input[i] == "delete"){
         string param = input[i+1];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
         tst->remove(param);
+        i++;
       }
       else if(input[i] == "range_search"){
         string param = input[i+1] + " " + input[i+2] + " " + input[i+3];
         param.erase(remove(param.begin(), param.end(), ','), param.end());
         tst->range_search(param);
+        i+=3;
       }
     }
   }
