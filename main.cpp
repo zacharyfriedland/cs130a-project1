@@ -29,7 +29,6 @@ int main(int argc, char** argv) {
     }
   }
 
-
   for(int i = 0; i < input.size(); i++){
     if (find(begin(keywords), end(keywords), input[i]) != end(keywords)){
       if(input[i] == "lookup"){

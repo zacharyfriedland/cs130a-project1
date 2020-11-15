@@ -189,6 +189,8 @@ void TST::printInOrder(Node* n){
         printInOrder(n->mid);
         if(n->kright.second > 0)
             std::cout << n->kright.first << " " << n->kright.second << endl;
+        else if(n->kright.second == 0)
+            std::cout << "empty 0" << endl;
         printInOrder(n->right);
     }
 }
@@ -262,8 +264,17 @@ void TST::reorderTree(Node* n){
     if(n){
         // recurse through left subtree
         reorderTree(n->left);
-        // if there are no keys left
+        //if there are no keys left
         if(n->kleft.second == 0 && n->kright.second == 0){
+            if(n == n->parent->left){
+                n->parent->left = 0;
+            }
+            else if(n == n->parent->mid){
+                n->parent->mid = 0;
+            }
+            else if(n == n->parent->right){
+                n->parent->right = 0;
+            }
             delete n;
         }
         // if there is a kright with no kleft
@@ -372,8 +383,8 @@ bool TST::remove(string word){
                     // get next smallest word
                     Node* tmp = getPredecessorNode(word);                    
                     // left subtree
-                    // if predecessor node has a kright
-                    if(tmp->kright.first < target->kleft.first){
+                    if(tmp->kright.first != "" && tmp->kright.first < target->kleft.first){
+                        // if predecessor node has a kright
                         if(tmp->kright.second > 0){
                             target->kleft.first = tmp->kright.first;
                             target->kleft.second = tmp->kright.second;
@@ -402,7 +413,6 @@ bool TST::remove(string word){
                         std::cout << word << " deleted" << endl;
                         reorderTree(root);
                         return true;
-    
                     }
                     // if only right subtree
                     // if(tmp->kleft.first > target->kright.first)
@@ -497,7 +507,6 @@ bool TST::remove(string word){
                 else{
                     // get next smallest word
                     Node* tmp = getSuccessorNode(word);
-                    //Node* tmp = getPredecessorNode(word);
                     // right subtree
                     if(tmp->kleft.first > target->kright.first){
                         target->kright.first = tmp->kleft.first;
@@ -529,30 +538,6 @@ bool TST::remove(string word){
                             return true;
                         }
                     }
-                    // left subtree
-                    // else if(tmp->kright.first < target->kleft.first){
-                    //     if(tmp->kright.second > 0){
-                    //         target->kright.first = tmp->kright.first;
-                    //         target->kright.second = tmp->kright.second;
-                    //         tmp->kright.first = "";
-                    //         tmp->kright.second = 0;
-                    //         std::cout << word << " deleted" << endl;
-                    //         reorderTree(root);
-                    //         return true;
-                    //     }
-                    //     else{
-                    //         target->kright.first = target->kleft.first;
-                    //         target->kright.second = target->kleft.second;
-                    //         target->kleft.first = tmp->kleft.first;
-                    //         target->kleft.second = tmp->kleft.second;
-                    //         tmp->kleft.first = "";
-                    //         tmp->kleft.second = 0;
-                    //         std::cout << word << " deleted" << endl;
-                    //         reorderTree(root);
-                    //         return true;
-                    //     }
-                    // }
-                    // COPYING BELOW THIS ________
                     // two part
                     else if(tmp->kright.second > 0){
                         // mid subtree
@@ -606,6 +591,5 @@ bool TST::remove(string word){
             }
         }
     }
-    std::cout << "hitting false" << endl;
     return false;
 }
