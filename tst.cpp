@@ -291,7 +291,7 @@ bool TST::remove(string word){
             // decrement count if > 1
             if(target->kleft.second > 1){
                 target->kleft.second--;
-                cout << word << " deleted, new count = " << target->kleft.second << endl;
+                std::cout << word << " deleted, new count = " << target->kleft.second << endl;
                 return true;
             }
             else if(target->kleft.second == 1){
@@ -370,11 +370,11 @@ bool TST::remove(string word){
                 // if children present
                 else{
                     // get next smallest word
-                    Node* tmp = getPredecessorNode(word);
+                    Node* tmp = getPredecessorNode(word);                    
                     // left subtree
                     // if predecessor node has a kright
-                    if(tmp->kright.second > 0){
-                        if(tmp->kright.first < target->kleft.first){
+                    if(tmp->kright.first < target->kleft.first){
+                        if(tmp->kright.second > 0){
                             target->kleft.first = tmp->kright.first;
                             target->kleft.second = tmp->kright.second;
                             tmp->kright.first = "";
@@ -383,16 +383,14 @@ bool TST::remove(string word){
                             reorderTree(root);
                             return true;
                         }
-                    }
-                    else if(tmp->kright.second < 1){
-                        if(tmp->kleft.first < target->kleft.first){
-                                target->kleft.first = tmp->kleft.first;
-                                target->kleft.second = tmp->kleft.second;
-                                tmp->kright.first = "";
-                                tmp->kright.second = 0;
-                                std::cout << word << " deleted" << endl;
-                                reorderTree(root);
-                                return true;
+                        else{
+                            target->kleft.first = tmp->kleft.first;
+                            target->kleft.second = tmp->kleft.second;
+                            tmp->kright.first = "";
+                            tmp->kright.second = 0;
+                            std::cout << word << " deleted" << endl;
+                            reorderTree(root);
+                            return true;
                         }
                     }
                     // mid subtree
@@ -423,6 +421,7 @@ bool TST::remove(string word){
                 
             }
         }
+        // word is in kright
         else if(word == target->kright.first){
             // decrement count if > 1
             if(target->kright.second > 1){
@@ -498,6 +497,7 @@ bool TST::remove(string word){
                 else{
                     // get next smallest word
                     Node* tmp = getSuccessorNode(word);
+                    //Node* tmp = getPredecessorNode(word);
                     // right subtree
                     if(tmp->kleft.first > target->kright.first){
                         target->kright.first = tmp->kleft.first;
@@ -508,6 +508,51 @@ bool TST::remove(string word){
                         reorderTree(root);
                         return true;
                     }
+                    // mid subtree
+                    else if(tmp->kright.first < target->kright.first && tmp->kright.first > target->kleft.first){
+                        if(tmp->kright.second > 0){
+                            target->kright.first = tmp->kright.first;
+                            target->kright.second = tmp->kright.second;
+                            tmp->kright.first = "";
+                            tmp->kright.second = 0;
+                            std::cout << word << " deleted" << endl;
+                            reorderTree(root);
+                            return true;
+                        }
+                        else{
+                            target->kright.first = tmp->kleft.first;
+                            target->kright.second = tmp->kleft.second;
+                            tmp->kleft.first = "";
+                            tmp->kleft.second = 0;
+                            std::cout << word << " deleted" << endl;
+                            reorderTree(root);
+                            return true;
+                        }
+                    }
+                    // left subtree
+                    // else if(tmp->kright.first < target->kleft.first){
+                    //     if(tmp->kright.second > 0){
+                    //         target->kright.first = tmp->kright.first;
+                    //         target->kright.second = tmp->kright.second;
+                    //         tmp->kright.first = "";
+                    //         tmp->kright.second = 0;
+                    //         std::cout << word << " deleted" << endl;
+                    //         reorderTree(root);
+                    //         return true;
+                    //     }
+                    //     else{
+                    //         target->kright.first = target->kleft.first;
+                    //         target->kright.second = target->kleft.second;
+                    //         target->kleft.first = tmp->kleft.first;
+                    //         target->kleft.second = tmp->kleft.second;
+                    //         tmp->kleft.first = "";
+                    //         tmp->kleft.second = 0;
+                    //         std::cout << word << " deleted" << endl;
+                    //         reorderTree(root);
+                    //         return true;
+                    //     }
+                    // }
+                    // COPYING BELOW THIS ________
                     // two part
                     else if(tmp->kright.second > 0){
                         // mid subtree
@@ -561,5 +606,6 @@ bool TST::remove(string word){
             }
         }
     }
+    std::cout << "hitting false" << endl;
     return false;
 }
